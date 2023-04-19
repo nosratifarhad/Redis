@@ -41,3 +41,6 @@ public void Delete(string cacheKey)
     _database.KeyDelete(cacheKey);
 }
 ```
+### You can Use This Methods in Services 
+
+## Good luck ;)
