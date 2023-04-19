@@ -1,5 +1,10 @@
 # Redis
 
+### First Install Package
+```
+StackExchange.Redis
+```
+
 ### Add Redis Services 
 
 ```csharp
