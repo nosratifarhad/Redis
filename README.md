@@ -62,7 +62,7 @@ public async Task<ProductViewModel> GetProductAsync(int productId)
         throw new ArgumentException("Product Id Is Invalid");
 
     string cacheKey = "getProductsAsync";//you can get from confige files
-    int cacheTimeOut = 180;//you can get from confige files
+    int cacheTimeOut = 60;//you can get from confige files
 
     var cacheResult = await GetAsync<ProductViewModel>(cacheKey);
     if (cacheResult != null)
