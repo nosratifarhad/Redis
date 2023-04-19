@@ -4,6 +4,13 @@
 ```
 StackExchange.Redis
 ```
+### Add RedisConfiguration In appsettings.json File 
+```json
+ "RedisConfiguration": {
+    "ConnectionString": "127.0.0.0:6379",
+    "DataBaseNumber": 1
+  },
+```
 
 ### Add Redis Services 
 
