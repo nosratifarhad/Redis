@@ -1,3 +1,5 @@
+using WebApplicationRedis.Helpers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +8,15 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+#region Add Redis Services 
+
+builder.Services.AddOptions<RedisOption>()
+    .Bind(builder.Configuration.GetSection("RedisConfiguration"))
+    .ValidateDataAnnotations();
+
+#endregion Add Redis Services 
 
 var app = builder.Build();
 
