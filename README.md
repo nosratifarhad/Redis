@@ -16,3 +16,27 @@ builder.Services.AddOptions<RedisOption>()
         public int DataBaseNumber { get; set; }
     }
 ```
+### Add Redis Cache Repository
+
+```csharp
+public async Task<T> GetAsync<T>(string key)
+{
+    var redisValue = await _database.StringGetAsync(key);
+    if (string.IsNullOrWhiteSpace(redisValue))
+        return default;
+
+    return JsonConvert.DeserializeObject<T>(redisValue);
+}
+
+public async Task SetAsync<T>(string key, T value, TimeSpan timeSpan)
+{
+    var redisValue = JsonConvert.SerializeObject(value);
+
+    await _database.StringSetAsync(key, redisValue, timeSpan);
+}
+
+public void Delete(string cacheKey)
+{
+    _database.KeyDelete(cacheKey);
+}
+```
