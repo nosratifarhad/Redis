@@ -22,7 +22,8 @@ builder.Services.AddOptions<RedisOption>()
 public async Task<T> GetAsync<T>(string key)
 {
     var redisValue = await _database.StringGetAsync(key);
-    if (string.IsNullOrWhiteSpace(redisValue))
+    if (string.IsNullOrWhiteSpace(redisValue) ||
+        string.IsNullOrEmpty(redisValue))
         return default;
 
     return JsonConvert.DeserializeObject<T>(redisValue);
