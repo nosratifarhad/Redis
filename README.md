@@ -79,5 +79,13 @@ public async Task<ProductViewModel> GetProductAsync(int productId)
     return productViewModel;
 }
 
+private async Task SetAsync<T>(string key, T result, int cacheTimeOut)
+    => await _redisCacheRepository
+         .SetAsync(key, result, TimeSpan.FromMinutes(cacheTimeOut));
+
+private async Task<T> GetAsync<T>(string cacheKey)
+    => await _redisCacheRepository
+        .GetAsync<T>(cacheKey);
+
 ```
 ## Good luck ;)
