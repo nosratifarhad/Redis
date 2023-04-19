@@ -29,8 +29,8 @@ namespace WebApplicationRedis.Services
             if (productId <= 0)
                 throw new ArgumentException("Product Id Is Invalid");
 
-            string cacheKey = "getProductsAsync";
-            int cacheTimeOut = 180;
+            string cacheKey = "getProductsAsync";//you can get from confige files
+            int cacheTimeOut = 180;//you can get from confige files
 
             var cacheResult = await GetAsync<ProductViewModel>(cacheKey);
             if (cacheResult != null)
