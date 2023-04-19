@@ -54,5 +54,30 @@ public void Delete(string cacheKey)
 }
 ```
 ### You can Use This Methods in Services 
+### Exemple :
+```csharp
+public async Task<ProductViewModel> GetProductAsync(int productId)
+{
+    if (productId <= 0)
+        throw new ArgumentException("Product Id Is Invalid");
 
+    string cacheKey = "getProductsAsync";//you can get from confige files
+    int cacheTimeOut = 180;//you can get from confige files
+
+    var cacheResult = await GetAsync<ProductViewModel>(cacheKey);
+    if (cacheResult != null)
+        return cacheResult;
+
+    var productDto = await _productReadRepository.GetProductAsync(productId).ConfigureAwait(false);
+    if (productDto == null)
+        return new ProductViewModel();
+
+    var productViewModel = CreateProductViewModelFromProductDto(productDto);
+
+    await SetAsync(cacheKey, productViewModel, cacheTimeOut).ConfigureAwait(false);
+
+    return productViewModel;
+}
+
+```
 ## Good luck ;)
