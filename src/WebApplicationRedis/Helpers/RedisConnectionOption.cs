@@ -1,6 +1,6 @@
 ﻿namespace WebApplicationRedis.Helpers
 {
-    public class RedisOption
+    public class RedisConnectionOption
     {
         public string ConnectionString { get; set; }
 

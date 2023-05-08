@@ -12,12 +12,12 @@ namespace WebApplicationRedis.Services
     public class ProductServices : IProductServices
     {
         #region Fields
-        
+
         private readonly RedisSettingOption _redisSettingOption;
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
         private readonly IRedisCacheRepository _redisCacheRepository;
-        
+
         #endregion Fields
 
         #region Ctor
@@ -84,19 +84,35 @@ namespace WebApplicationRedis.Services
 
         public async Task<int> CreateProductAsync(CreateProductInputModel inputModel)
         {
+            if (inputModel == null)
+                throw new NullReferenceException("Product Id Is Invalid");
+
+            string cacheKey = _redisSettingOption.RedisKey;
+            int cacheTimeOut = _redisSettingOption.CacheTimeOut;
+
             ValidateProductName(inputModel.ProductName);
 
             ValidateProductTitle(inputModel.ProductTitle);
 
             var productEntoty = CreateProductEntityFromInputModel(inputModel);
 
-            return await _productWriteRepository.CreateProductAsync(productEntoty).ConfigureAwait(false);
+            int productId = await _productWriteRepository.CreateProductAsync(productEntoty).ConfigureAwait(false);
+
+            productEntoty.setProductId(productId);
+
+            await SetInToCacheAsync(cacheKey, productEntoty, cacheTimeOut).ConfigureAwait(false);
+
+            return productId;
+
         }
 
         public async Task UpdateProductAsync(UpdateProductInputModel inputModel)
         {
             if (inputModel.ProductId <= 0)
                 throw new NullReferenceException("ProductId Is Invalid.");
+
+            string cacheKey = _redisSettingOption.RedisKey;
+            int cacheTimeOut = _redisSettingOption.CacheTimeOut;
 
             ValidateProductName(inputModel.ProductName);
 
@@ -107,6 +123,10 @@ namespace WebApplicationRedis.Services
             var productEntoty = CreateProductEntityFromInputModel(inputModel);
 
             await _productWriteRepository.UpdateProductAsync(productEntoty).ConfigureAwait(false);
+
+            DeleteCache(cacheKey);
+
+            await SetInToCacheAsync(cacheKey, productEntoty, cacheTimeOut).ConfigureAwait(false);
         }
 
         public async Task DeleteProductAsync(int productId)
@@ -114,7 +134,7 @@ namespace WebApplicationRedis.Services
             if (productId <= 0)
                 throw new NullReferenceException("ProductId Is Invalid.");
 
-            string cacheKey = "getProductsAsync";
+            string cacheKey = _redisSettingOption.RedisKey;
 
             await IsExistProduct(productId).ConfigureAwait(false);
 
@@ -130,7 +150,7 @@ namespace WebApplicationRedis.Services
         private void DeleteCache(string key)
            => _redisCacheRepository.Delete(key);
 
-        private async Task SetInToCacheAsync<T>(string key, T result, int cacheTimeOut)
+        private async Task SetInToCacheAsync<T>(string key, T? result, int cacheTimeOut)
             => await _redisCacheRepository
                  .SetAsync(key, result, TimeSpan.FromMinutes(cacheTimeOut));
 
