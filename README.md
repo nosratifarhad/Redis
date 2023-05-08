@@ -96,7 +96,7 @@ And you can see this [link](https://github.com/dotnet/efcore/blob/main/src/EFCor
      return productViewModel;
  }
 
-         public async Task<int> CreateProductAsync(CreateProductInputModel inputModel)
+ public async Task<int> CreateProductAsync(CreateProductInputModel inputModel)
  {
      if (inputModel == null)
          throw new NullReferenceException("Product Id Is Invalid");
@@ -150,9 +150,9 @@ private async Task<T> GetFromCacheAsync<T>(string cacheKey)
         var (processedKeyValues, ct) = ValidateKeyPropertiesAndExtractCancellationToken(keyValues!, async: true, cancellationToken);
 
         var tracked = FindTracked(processedKeyValues);
-        return tracked != null // this line
-            ? new ValueTask<TEntity?>(tracked) // this line
-            : new ValueTask<TEntity?>( // this line
+        return tracked != null // this line <=======
+            ? new ValueTask<TEntity?>(tracked) // this line <=======
+            : new ValueTask<TEntity?>( // this line <=======
                 _queryRoot.FirstOrDefaultAsync(BuildLambda(_primaryKey.Properties, new ValueBuffer(processedKeyValues)), ct)); // this line
     }
 ```
