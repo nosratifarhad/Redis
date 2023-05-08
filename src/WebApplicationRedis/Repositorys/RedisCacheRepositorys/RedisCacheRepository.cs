@@ -4,7 +4,7 @@ using StackExchange.Redis;
 using Newtonsoft.Json;
 using WebApplicationRedis.Domain;
 
-namespace WebApplicationRedis.Repositorys.RedisCacheRepository
+namespace WebApplicationRedis.Repositorys.RedisCacheRepositorys
 {
     public class RedisCacheRepository : IRedisCacheRepository
     {
@@ -24,27 +24,28 @@ namespace WebApplicationRedis.Repositorys.RedisCacheRepository
         #endregion Ctor
 
         #region Methods
-        
+
         public async Task<T> GetAsync<T>(string key)
         {
-            var redisValue = await _database.StringGetAsync(key);
-            if (string.IsNullOrWhiteSpace(redisValue) ||
-                string.IsNullOrEmpty(redisValue))
-                return default;
+            //var redisValue = await _database.StringGetAsync(key);
+            //if (string.IsNullOrWhiteSpace(redisValue) ||
+            //    string.IsNullOrEmpty(redisValue))
+            //    return default;
 
-            return JsonConvert.DeserializeObject<T>(redisValue);
+            //return JsonConvert.DeserializeObject<T>(redisValue);
+            return await Task.Run(() => JsonConvert.DeserializeObject<T>("teste"));
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan timeSpan)
         {
-            var redisValue = JsonConvert.SerializeObject(value);
+            //var redisValue = JsonConvert.SerializeObject(value);
 
-            await _database.StringSetAsync(key, redisValue, timeSpan);
+            //await _database.StringSetAsync(key, redisValue, timeSpan);
         }
 
         public void Delete(string cacheKey)
         {
-            _database.KeyDelete(cacheKey);
+            //_database.KeyDelete(cacheKey);
         }
 
         #endregion Methods
