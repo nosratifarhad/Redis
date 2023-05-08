@@ -2,7 +2,7 @@
 
 ### First Install Package
 ```
-StackExchange.Redis
+dotnet add package StackExchange.Redis --version 2.6.111
 ```
 ### Add RedisConfiguration And RedisSetting In appsettings.json File 
 ```json
