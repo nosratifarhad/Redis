@@ -11,8 +11,8 @@ namespace WebApplicationRedis.Services.Contracts
 
         Task DeleteProductAsync(int productId);
 
-        Task<ProductViewModel> GetProductAsync(int productId);
+        ValueTask<ProductViewModel> GetProductAsync(int productId);
 
-        Task<IEnumerable<ProductViewModel>> GetProductsAsync();
+        ValueTask<IEnumerable<ProductViewModel>> GetProductsAsync();
     }
 }
