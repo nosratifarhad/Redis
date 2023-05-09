@@ -11,44 +11,32 @@ using WebApplicationRedis.Services.Contracts;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region DIC
 
+string connection = builder.Configuration.GetValue<string>("RedisConfiguration:ConnectionString");
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration.GetValue<string>("RedisConfiguration:ConnectionString");
-});
-
-//builder.Services.AddScoped<IDatabase>(cfg =>
-//{
-//    IConnectionMultiplexer multiplexer = 
-//    ConnectionMultiplexer.Connect(builder.Configuration.GetValue<string>("RedisConfiguration:ConnectionString"));
-//    return multiplexer.GetDatabase();
-//});
-
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(connection));
 
 builder.Services.AddScoped<IProductServices, ProductServices>();
-builder.Services.AddScoped<IConnectionMultiplexer, ConnectionMultiplexer>();
-builder.Services.AddScoped<IRedisCacheRepository, RedisCacheRepository>();
+builder.Services.AddTransient<IRedisCacheRepository, RedisCacheRepository>();
 builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
 
-
 #endregion DIC
 
-#region Add Redis Services 
+#region Add Redis Option 
 
-builder.Services.AddOptions<RedisOption>()
+builder.Services.AddOptions<RedisConnectionOption>()
     .Bind(builder.Configuration.GetSection("RedisConfiguration"))
     .ValidateDataAnnotations();
 
 builder.Services.Configure<RedisSettingOption>(options => builder.Configuration.GetSection("RedisSetting").Bind(options));
 
-#endregion Add Redis Services 
+#endregion Add Redis Option 
 
 var app = builder.Build();
 

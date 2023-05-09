@@ -76,5 +76,9 @@
 
         #endregion Ctor
 
+        public void setProductId(int productId)
+        {
+            ProductId = productId;
+        }
     }
 }
