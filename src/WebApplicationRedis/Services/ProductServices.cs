@@ -103,7 +103,6 @@ namespace WebApplicationRedis.Services
             await SetInToCacheAsync(cacheKey, productEntoty, cacheTimeOut).ConfigureAwait(false);
 
             return productId;
-
         }
 
         public async Task UpdateProductAsync(UpdateProductInputModel inputModel)
@@ -150,7 +149,7 @@ namespace WebApplicationRedis.Services
         private void DeleteCache(string cacheKey)
            => _redisCacheRepository.Delete(cacheKey);
 
-        private async Task SetInToCacheAsync<T>(string cacheKey, T? result, int cacheTimeOut)
+        private async Task SetInToCacheAsync<T>(string cacheKey, T result, int cacheTimeOut)
             => await _redisCacheRepository
                  .SetAsync(cacheKey, result, TimeSpan.FromMinutes(cacheTimeOut));
 
