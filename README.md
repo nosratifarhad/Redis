@@ -11,7 +11,7 @@ dotnet add package StackExchange.Redis --version 2.6.111
   "DataBaseNumber": 0
 },
 "RedisSetting": {
-  "RedisKey": "**********",
+  "ProductKey": "product_{0}",
   "CacheTimeOut": 180
 }
 ```
@@ -37,7 +37,7 @@ public class RedisOption
 
 public class RedisSettingOption
 {
-    public string RedisKey { get; set; }
+    public string ProductKey { get; set; }
 
     public int CacheTimeOut { get; set; }
 }
@@ -73,52 +73,50 @@ public void Delete(string cacheKey)
 And you can see this [link](https://github.com/dotnet/efcore/blob/main/src/EFCore/Internal/EntityFinder.cs) ef using this key For "FindAsync" Method .
 ### Exemple :
 ```csharp
- public async ValueTask<ProductViewModel> GetProductAsync(int productId)
- {
-     if (productId <= 0)
-         throw new NullReferenceException("Product Id Is Invalid");
+public async ValueTask<ProductViewModel> GetProductAsync(int productId)
+{
+    if (productId <= 0)
+        throw new NullReferenceException("Product Id Is Invalid");
 
-     string cacheKey = _redisSettingOption.RedisKey;
-     int cacheTimeOut = _redisSettingOption.CacheTimeOut;
+    string cacheKey = string.Format(_redisSettingOption.ProductKey, productId);
+    int cacheTimeOut = _redisSettingOption.CacheTimeOut;
 
-     var cacheResult = await GetFromCacheAsync<ProductViewModel>(cacheKey);
-     if (cacheResult != null)
-         return cacheResult;
+    var cacheResult = await GetFromCacheAsync<ProductViewModel>(cacheKey);
+    if (cacheResult != null)
+        return cacheResult;
 
-     var productDto = await _productReadRepository.GetProductAsync(productId).ConfigureAwait(false);
-     if (productDto == null)
-         return new ProductViewModel();
+    var productDto = await _productReadRepository.GetProductAsync(productId).ConfigureAwait(false);
+    if (productDto == null)
+        return new ProductViewModel();
 
-     var productViewModel = CreateProductViewModelFromProductDto(productDto);
+    var productViewModel = CreateProductViewModelFromProductDto(productDto);
 
-     await SetInToCacheAsync(cacheKey, productViewModel, cacheTimeOut).ConfigureAwait(false);
+    await SetInToCacheAsync(cacheKey, productViewModel, cacheTimeOut).ConfigureAwait(false);
 
-     return productViewModel;
- }
+    return productViewModel;
+}
+public async Task<int> CreateProductAsync(CreateProductInputModel inputModel)
+{
+    if (inputModel == null)
+        throw new NullReferenceException("Product Id Is Invalid");
 
- public async Task<int> CreateProductAsync(CreateProductInputModel inputModel)
- {
-     if (inputModel == null)
-         throw new NullReferenceException("Product Id Is Invalid");
+    ValidateProductName(inputModel.ProductName);
 
-     string cacheKey = _redisSettingOption.RedisKey;
-     int cacheTimeOut = _redisSettingOption.CacheTimeOut;
+    ValidateProductTitle(inputModel.ProductTitle);
 
-     ValidateProductName(inputModel.ProductName);
+    var productEntoty = CreateProductEntityFromInputModel(inputModel);
 
-     ValidateProductTitle(inputModel.ProductTitle);
+    int productId = await _productWriteRepository.CreateProductAsync(productEntoty).ConfigureAwait(false);
 
-     var productEntoty = CreateProductEntityFromInputModel(inputModel);
+    productEntoty.setProductId(productId);
 
-     int productId = await _productWriteRepository.CreateProductAsync(productEntoty).ConfigureAwait(false);
+    string cacheKey = string.Format(_redisSettingOption.ProductKey, productId);
+    int cacheTimeOut = _redisSettingOption.CacheTimeOut;
 
-     productEntoty.setProductId(productId);
+    await SetInToCacheAsync(cacheKey, productEntoty, cacheTimeOut).ConfigureAwait(false);
 
-     await SetInToCacheAsync(cacheKey, productEntoty, cacheTimeOut).ConfigureAwait(false);
-
-     return productId;
-
- }
+    return productId;
+}
 
 private void DeleteCache(string key)
    => _redisCacheRepository.Delete(key);
