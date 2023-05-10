@@ -3,8 +3,8 @@ using StackExchange.Redis;
 using System.Runtime;
 using WebApplicationRedis.Domain;
 using WebApplicationRedis.Helpers;
-using WebApplicationRedis.Repositorys;
-using WebApplicationRedis.Repositorys.RedisCacheRepositorys;
+using WebApplicationRedis.Infra.repositories;
+using WebApplicationRedis.Infra.repositories.RedisCacheRepositorys;
 using WebApplicationRedis.Services;
 using WebApplicationRedis.Services.Contracts;
 

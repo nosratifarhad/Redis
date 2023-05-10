@@ -4,7 +4,7 @@ using StackExchange.Redis;
 using Newtonsoft.Json;
 using WebApplicationRedis.Domain;
 
-namespace WebApplicationRedis.Repositorys.RedisCacheRepositorys
+namespace WebApplicationRedis.Infra.repositories.RedisCacheRepositorys
 {
     public class RedisCacheRepository : IRedisCacheRepository
     {
@@ -24,7 +24,7 @@ namespace WebApplicationRedis.Repositorys.RedisCacheRepositorys
         #endregion Ctor
 
         #region Methods
-        
+
         public async Task<T> GetAsync<T>(string key)
         {
             var redisValue = await _database.StringGetAsync(key);

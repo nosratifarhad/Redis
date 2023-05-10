@@ -38,7 +38,7 @@ namespace WebApplicationRedis.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpPost("/api/v1/product")]
+        [HttpPost("/api/v1/products")]
         public async ValueTask<IActionResult> CreateProduct(CreateProductInputModel command)
         {
             int productId = await _productServices.CreateProductAsync(command);
@@ -51,7 +51,7 @@ namespace WebApplicationRedis.Controllers
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        [HttpGet("/api/v1/product/{productId:int}", Name = nameof(GetProduct))]
+        [HttpGet("/api/v1/products/{productId:int}", Name = nameof(GetProduct))]
         public async ValueTask<IActionResult> GetProduct(int productId)
         {
             var productVM = await _productServices.GetProductAsync(productId);
@@ -65,7 +65,7 @@ namespace WebApplicationRedis.Controllers
         /// <param name="productId"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpPut("/api/v1/product/{productId:int}")]
+        [HttpPut("/api/v1/products/{productId:int}")]
         public async Task<IActionResult> UpdateProduct(int productId, UpdateProductInputModel command)
         {
             if (productId != command.ProductId)
@@ -81,7 +81,7 @@ namespace WebApplicationRedis.Controllers
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        [HttpDelete("/api/v1/product/{productId:int}")]
+        [HttpDelete("/api/v1/products/{productId:int}")]
         public async Task<IActionResult> DeleteProduct(int productId)
         {
             await _productServices.DeleteProductAsync(productId);
