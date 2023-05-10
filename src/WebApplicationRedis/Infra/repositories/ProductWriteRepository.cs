@@ -1,7 +1,7 @@
 ﻿using WebApplicationRedis.Domain;
 using WebApplicationRedis.Domain.Entitys;
 
-namespace WebApplicationRedis.Repositorys
+namespace WebApplicationRedis.Infra.repositories
 {
     public class ProductWriteRepository : IProductWriteRepository
     {

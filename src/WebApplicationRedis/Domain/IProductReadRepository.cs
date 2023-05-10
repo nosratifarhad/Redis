@@ -1,12 +1,12 @@
-﻿using WebApplicationRedis.Domain.Dtos;
+﻿using WebApplicationRedis.Domain.Entitys;
 
 namespace WebApplicationRedis.Domain
 {
     public interface IProductReadRepository
     {
-        Task<ProductDto> GetProductAsync(int productId);
+        Task<Product> GetProductAsync(int productId);
 
-        Task<IEnumerable<ProductDto>> GetProductsAsync();
+        Task<IEnumerable<Product>> GetProductsAsync();
 
         Task<bool> IsExistProductAsync(int productId);
     }

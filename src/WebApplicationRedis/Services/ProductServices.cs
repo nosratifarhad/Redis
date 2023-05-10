@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using WebApplicationRedis.Domain;
-using WebApplicationRedis.Domain.Dtos;
 using WebApplicationRedis.Domain.Entitys;
 using WebApplicationRedis.Helpers;
 using WebApplicationRedis.InputModels.ProductInputModels;
@@ -49,11 +48,11 @@ namespace WebApplicationRedis.Services
             if (cacheResult != null)
                 return cacheResult;
 
-            var productDto = await _productReadRepository.GetProductAsync(productId).ConfigureAwait(false);
-            if (productDto == null)
+            var product = await _productReadRepository.GetProductAsync(productId).ConfigureAwait(false);
+            if (product == null)
                 return new ProductViewModel();
 
-            var productViewModel = CreateProductViewModelFromProductDto(productDto);
+            var productViewModel = CreateProductViewModelFromProduct(product);
 
             await SetInToCacheAsync(cacheKey, productViewModel, cacheTimeOut).ConfigureAwait(false);
 
@@ -70,12 +69,12 @@ namespace WebApplicationRedis.Services
             if (cacheResult != null)
                 return cacheResult;
 
-            var productDtos = await _productReadRepository.GetProductsAsync().ConfigureAwait(false);
+            var products = await _productReadRepository.GetProductsAsync().ConfigureAwait(false);
 
-            if (productDtos == null || productDtos.Count() == 0)
+            if (products == null || products.Count() == 0)
                 return Enumerable.Empty<ProductViewModel>();
 
-            var productViewModels = CreateProductViewModelsFromProductDtos(productDtos);
+            var productViewModels = CreateProductViewModelsFromProducts(products);
 
             await SetInToCacheAsync(cacheKey, productViewModels, cacheTimeOut).ConfigureAwait(false);
 
@@ -91,16 +90,16 @@ namespace WebApplicationRedis.Services
 
             ValidateProductTitle(inputModel.ProductTitle);
 
-            var productEntoty = CreateProductEntityFromInputModel(inputModel);
+            var product= CreateProductEntityFromInputModel(inputModel);
 
-            int productId = await _productWriteRepository.CreateProductAsync(productEntoty).ConfigureAwait(false);
+            int productId = await _productWriteRepository.CreateProductAsync(product).ConfigureAwait(false);
 
-            productEntoty.setProductId(productId);
+            product.setProductId(productId);
 
             string cacheKey = string.Format(_redisSettingOption.ProductKey, productId);
             int cacheTimeOut = _redisSettingOption.CacheTimeOut;
 
-            await SetInToCacheAsync(cacheKey, productEntoty, cacheTimeOut).ConfigureAwait(false);
+            await SetInToCacheAsync(cacheKey, product, cacheTimeOut).ConfigureAwait(false);
 
             return productId;
         }
@@ -174,40 +173,39 @@ namespace WebApplicationRedis.Services
         private Product CreateProductEntityFromInputModel(UpdateProductInputModel inputModel)
             => new Product(inputModel.ProductId, inputModel.ProductName, inputModel.ProductTitle, inputModel.ProductDescription, inputModel.MainImageName, inputModel.MainImageTitle, inputModel.MainImageUri, inputModel.IsExisting, inputModel.IsFreeDelivery, inputModel.Weight);
 
-        private ProductViewModel CreateProductViewModelFromProductDto(ProductDto dto)
+        private ProductViewModel CreateProductViewModelFromProduct(Product product)
             => new ProductViewModel()
             {
-                ProductId = dto.ProductId,
-                ProductName = dto.ProductName,
-                ProductTitle = dto.ProductTitle,
-                ProductDescription = dto.ProductDescription,
-                MainImageName = dto.MainImageName,
-                MainImageTitle = dto.MainImageTitle,
-                MainImageUri = dto.MainImageUri,
-                IsExisting = dto.IsExisting,
-                IsFreeDelivery = dto.IsFreeDelivery,
-                Weight = dto.Weight
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                ProductTitle = product.ProductTitle,
+                ProductDescription = product.ProductDescription,
+                MainImageName = product.MainImageName,
+                MainImageTitle = product.MainImageTitle,
+                MainImageUri = product.MainImageUri,
+                IsExisting = product.IsExisting,
+                IsFreeDelivery = product.IsFreeDelivery,
+                Weight = product.Weight
             };
 
-        private IEnumerable<ProductViewModel> CreateProductViewModelsFromProductDtos(IEnumerable<ProductDto> dtos)
+        private IEnumerable<ProductViewModel> CreateProductViewModelsFromProducts(IEnumerable<Product> products)
         {
             ICollection<ProductViewModel> productViewModels = new List<ProductViewModel>();
 
-            foreach (var ProductDto in dtos)
+            foreach (var product in products)
                 productViewModels.Add(
                      new ProductViewModel()
                      {
-
-                         ProductId = ProductDto.ProductId,
-                         ProductName = ProductDto.ProductName,
-                         ProductTitle = ProductDto.ProductTitle,
-                         ProductDescription = ProductDto.ProductDescription,
-                         MainImageName = ProductDto.MainImageName,
-                         MainImageTitle = ProductDto.MainImageTitle,
-                         MainImageUri = ProductDto.MainImageUri,
-                         IsExisting = ProductDto.IsExisting,
-                         IsFreeDelivery = ProductDto.IsFreeDelivery,
-                         Weight = ProductDto.Weight
+                         ProductId = product.ProductId,
+                         ProductName = product.ProductName,
+                         ProductTitle = product.ProductTitle,
+                         ProductDescription = product.ProductDescription,
+                         MainImageName = product.MainImageName,
+                         MainImageTitle = product.MainImageTitle,
+                         MainImageUri = product.MainImageUri,
+                         IsExisting = product.IsExisting,
+                         IsFreeDelivery = product.IsFreeDelivery,
+                         Weight = product.Weight
                      });
 
 
