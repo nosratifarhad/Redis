@@ -1,10 +1,9 @@
-using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
-using System.Runtime;
 using WebApplicationRedis.Domain;
 using WebApplicationRedis.Helpers;
-using WebApplicationRedis.Infra.repositories;
-using WebApplicationRedis.Infra.repositories.RedisCacheRepositorys;
+using WebApplicationRedis.Infra.Repositories.CacheRepositories.RedisCacheRepositories;
+using WebApplicationRedis.Infra.Repositories.ReadRepositories.ProductReadRepositories;
+using WebApplicationRedis.Infra.Repositories.WriteRepositories.ProductWriteRepositories;
 using WebApplicationRedis.Services;
 using WebApplicationRedis.Services.Contracts;
 
