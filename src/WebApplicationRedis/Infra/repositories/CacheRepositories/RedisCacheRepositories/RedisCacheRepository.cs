@@ -4,7 +4,7 @@ using StackExchange.Redis;
 using Newtonsoft.Json;
 using WebApplicationRedis.Domain;
 
-namespace WebApplicationRedis.Infra.repositories.RedisCacheRepositorys
+namespace WebApplicationRedis.Infra.Repositories.CacheRepositories.RedisCacheRepositories
 {
     public class RedisCacheRepository : IRedisCacheRepository
     {

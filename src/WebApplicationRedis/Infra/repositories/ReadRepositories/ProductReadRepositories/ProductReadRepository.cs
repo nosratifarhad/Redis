@@ -1,7 +1,7 @@
 ﻿using WebApplicationRedis.Domain;
 using WebApplicationRedis.Domain.Entitys;
 
-namespace WebApplicationRedis.Infra.repositories
+namespace WebApplicationRedis.Infra.Repositories.ReadRepositories.ProductReadRepositories
 {
     public class ProductReadRepository : IProductReadRepository
     {
