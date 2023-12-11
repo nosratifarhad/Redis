@@ -1,5 +1,5 @@
 # Redis
-
+## Note. I have used keywords and elements to convey only the meaning and concept to you in the simplest way possible.
 ### First Install Package
 ```
 dotnet add package StackExchange.Redis --version 2.6.111
